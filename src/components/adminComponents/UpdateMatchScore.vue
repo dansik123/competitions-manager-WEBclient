@@ -3,7 +3,7 @@ import { genericPatchHttpRequestNoParams } from '@/apiHttp/RequestsApi';
 import type { GenericErrorResponse, SingleMatchResponse } from '@/types/HttpResponseTypes';
 import type { AxiosError } from 'axios';
 import { inject, ref } from 'vue';
-import { useMutation } from 'vue-query';
+import { useMutation } from '@tanstack/vue-query';
 import { computed } from '@vue/reactivity';
 import type { UpdateMatchScoreResult } from '@/types/HttpRequestTypes';
 import { useAuthStore } from '@/stores/AuthorizationStore';
@@ -41,7 +41,7 @@ const popUpError: (msg: string, timeout: number) => void = inject("errorToastPop
 const patchMatchScoresHttpFn = async (scoresBody: UpdateMatchScoreResult) => 
     await genericPatchHttpRequestNoParams<UpdateMatchScoreResult, SingleMatchResponse>(`/matches/${props.matchId}/result`, scoresBody)
 const { mutate } = useMutation<SingleMatchResponse, AxiosError<any, GenericErrorResponse>, any>(
-    "updateMatchScoreResults",
+    ["updateMatchScoreResults"],
     patchMatchScoresHttpFn,
     {
         onSuccess: (data) => {

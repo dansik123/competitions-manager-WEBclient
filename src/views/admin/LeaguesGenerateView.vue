@@ -6,7 +6,7 @@ import { inject, ref } from "vue";
 import { genericPostHttpRequestNoParams } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse } from "@/types/HttpResponseTypes";
 import type { AxiosError } from "axios";
-import { useMutation } from "vue-query";
+import { useMutation } from "@tanstack/vue-query";
 import type { SaveLeaguesRequest } from "@/types/HttpRequestTypes";
 
 const selectedGunType = ref("")
@@ -55,7 +55,7 @@ const saveGeneratedLeaguesFn = async (requestBody: SaveLeaguesRequest) =>
     await genericPostHttpRequestNoParams<SaveLeaguesRequest, any>('/leagues', requestBody)
 const { mutate } = 
     useMutation<any, AxiosError<GenericErrorResponse, any>, SaveLeaguesRequest>(
-    'saveGeneratedLeagues', 
+    ['saveGeneratedLeagues'], 
     saveGeneratedLeaguesFn,
     {
         onSuccess: () =>{

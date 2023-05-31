@@ -3,7 +3,7 @@ import { inject, ref, watch } from "vue";
 import { genericGetHttpRequest } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse } from "@/types/HttpResponseTypes";
 import type { AxiosError } from 'axios';
-import { useQuery } from "vue-query";
+import { useQuery } from "@tanstack/vue-query";
 
 const props = defineProps({
     gunType: {
@@ -14,7 +14,7 @@ const props = defineProps({
 
 watch(() => props.gunType, () => {
     selectedLeagueGroup.value = ''
-    refetch.value({})
+    refetch({})
 })
 
 const emits = defineEmits(['selectedLeagueGroup'])
@@ -26,7 +26,7 @@ const selectedLeagueGroup = ref("")
 const fetchListOfLeagueGroups = async () => 
     await genericGetHttpRequest<Array<string>>('/leagues/groups', { gunType: props.gunType })
 const { isError, isLoading, error, refetch } = useQuery<Array<string>, AxiosError<GenericErrorResponse, any>>(
-'getLeagueGroupsList',
+['getLeagueGroupsList'],
 fetchListOfLeagueGroups,
 {
     onError: (error)=>{

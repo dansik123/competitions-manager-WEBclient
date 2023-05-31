@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, inject, ref, watch } from "vue";
-import { useQuery } from "vue-query";
+import { useQuery } from "@tanstack/vue-query";
 import { genericGetHttpRequest } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse, LeagueGroupRelocationResponse } from "@/types/HttpResponseTypes";
 import type { AxiosError } from 'axios';
@@ -39,7 +39,7 @@ const getLeaguesIds = () =>{
 watch(() => props.leagueGroupName, (newValue, oldValue) => {
     if(newValue != oldValue && newValue != ''){
         leagueGroupStatusData.value = defaultStatusData
-        refetch.value({})
+        refetch({})
     }
 })
 
@@ -54,7 +54,7 @@ const fetchGroupLeaguesStatusFn = async () =>
     await genericGetHttpRequest<LeagueGroupRelocationResponse>(`/leagues/groups/${props.leagueGroupName}`, {})
 const { isError, isLoading, error, refetch } = 
     useQuery<LeagueGroupRelocationResponse, AxiosError<GenericErrorResponse, any>>(
-    'getGroupLeaguesStatus', 
+    ['getGroupLeaguesStatus'], 
     fetchGroupLeaguesStatusFn,
     {
         onSuccess: (data) =>{

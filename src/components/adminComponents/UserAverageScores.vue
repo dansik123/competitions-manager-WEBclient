@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useQuery } from "vue-query";
+import { useQuery } from "@tanstack/vue-query";
 import { genericGetHttpRequest } from "@/apiHttp/RequestsApi";
 import type { UserAverageScores, GenericErrorResponse } from "@/types/HttpResponseTypes";
 
@@ -16,7 +16,7 @@ const fetchAverageScoresFn = async () =>
         `/users/${props.userId}/average-scores`, {})
 const { data, isError, isLoading, error } = 
     useQuery<Array<UserAverageScores>, GenericErrorResponse>(
-    'getUserAverageScores', 
+    ['getUserAverageScores'], 
     fetchAverageScoresFn,
     {
         retry: 0

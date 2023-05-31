@@ -3,7 +3,7 @@ import { genericPatchHttpRequestNoParams } from '@/apiHttp/RequestsApi';
 import type { GenericErrorResponse, UserMatchResponse } from '@/types/HttpResponseTypes';
 import type { AxiosError } from 'axios';
 import { inject, ref, type PropType } from 'vue';
-import { useMutation } from 'vue-query';
+import { useMutation } from '@tanstack/vue-query';
 import { dateRequestFormater } from '@/components/Formaters';
 import { isDateGraterThenNow } from '@/components/Utils';
 import { computed } from '@vue/reactivity';
@@ -32,7 +32,7 @@ const popUpError: (msg: string, timeout: number) => void = inject("errorToastPop
 const patchMatchDateHttpFn = async (dateBody: any) => 
     await genericPatchHttpRequestNoParams<any, UserMatchResponse>(`/matches/${props.matchId}/date`, dateBody)
 const { mutate } = useMutation<UserMatchResponse, AxiosError<any, GenericErrorResponse>, any>(
-    "updateMatchDate",
+    ["updateMatchDate"],
     patchMatchDateHttpFn,
     {
         onSuccess: (data) => {

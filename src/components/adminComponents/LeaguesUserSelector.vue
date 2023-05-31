@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useQuery } from "vue-query";
+import { useQuery } from "@tanstack/vue-query";
 import { genericGetHttpRequest } from "@/apiHttp/RequestsApi";
 import type { PagedResponse, PaginationData, GenericErrorResponse, LeagueSelectorPageQueryParam, MemberUserResponse } from "@/types/HttpResponseTypes";
 import type { AxiosError } from 'axios';
@@ -36,21 +36,21 @@ watch(() => props.selectedLeagueGunType, async (newGunType, oldGunType)=>{
     paginationQueryData.value = leagueQueryRequestDefaults;
     paginationQueryData.value.gunType = newGunType;
     resetSelectedUsers()
-    refetch.value({});
+    refetch({});
 })
 
 const updateContent = (newPageNumber: number) => {
     //the request page value starts from 0 therefore I have to substart 1
     //from pagination numbers value which starts from 1.
     paginationQueryData.value.page = newPageNumber - 1;
-    refetch.value({}) //refetch must have at least empty object to execute
+    refetch({}) //refetch must have at least empty object to execute
 }
 
 const fetchUsersForLeagueFn = async (paginationParams: LeagueSelectorPageQueryParam) => 
     await genericGetHttpRequest<PagedResponse<MemberUserResponse>>('/users/league-select', paginationParams)
 const { isError, isLoading, error, refetch } = 
     useQuery<PagedResponse<MemberUserResponse>, AxiosError<GenericErrorResponse, any>>(
-    'getUsersPagedList', 
+    ['getUsersPagedList'], 
     () => fetchUsersForLeagueFn(paginationQueryData.value),
     {
         onSuccess: (data) =>{

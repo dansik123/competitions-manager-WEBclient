@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { inject, onMounted, ref } from "vue";
-import { useMutation } from "vue-query";
+import { useMutation } from "@tanstack/vue-query";
 import { genericPostHttpRequest } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse, GeneratedLeagueGroup } from "@/types/HttpResponseTypes";
 import type { AxiosError } from 'axios';
-import { watch } from "vue";
 import { onUpdated } from "vue";
 
 const props = defineProps({
@@ -38,7 +37,7 @@ const fetchUsersGeneratedLeaguesFn = async (requestBody: any) =>
         '/leagues/generate', requestBody, {leagueSize: props.leagueCompetitorsSize})
 const { mutate } = 
     useMutation<Array<GeneratedLeagueGroup>, AxiosError<GenericErrorResponse, any>, any>(
-    'genrateUsersLeaguesTables', 
+    ['genrateUsersLeaguesTables'], 
     fetchUsersGeneratedLeaguesFn,
     {
         onSuccess: (data) =>{

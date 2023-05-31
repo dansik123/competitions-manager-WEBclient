@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useQuery } from "vue-query";
+import { useQuery } from "@tanstack/vue-query";
 import { genericGetHttpRequest } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse, SingleMatchResponse, SingleRoundMatchesResponse } from "@/types/HttpResponseTypes";
 import { ref } from "vue";
@@ -25,7 +25,7 @@ const fetchLeagueAllMatches = async (leagueId: number) =>
     await genericGetHttpRequest<Array<SingleRoundMatchesResponse>>(`/leagues/${leagueId}/matches`, {})
 const { isError, isLoading, error } = 
     useQuery<Array<SingleRoundMatchesResponse>, AxiosError<GenericErrorResponse, any>>(
-    'getAllLeagueMatches', 
+    ['getAllLeagueMatches'], 
     () => fetchLeagueAllMatches(props.leagueId),
     {
         onSuccess: (data) =>{

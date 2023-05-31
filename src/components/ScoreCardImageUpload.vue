@@ -3,7 +3,7 @@ import { computed, inject, ref } from "vue";
 import { genericPostHttpRequestFormBodyNoParams } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse, SingleMatchResponse } from "@/types/HttpResponseTypes";
 import type { AxiosError } from 'axios';
-import { useMutation } from "vue-query";
+import { useMutation } from "@tanstack/vue-query";
 
 const props = defineProps({
     matchId: {
@@ -31,7 +31,7 @@ const uploadScoreCardImage = async (imageFile: File) =>
     await genericPostHttpRequestFormBodyNoParams<SingleMatchResponse>(
         `/matches/${props.matchId}/${whichCompetitor.value}/scorecard`, imageFile)
 const { mutate } = useMutation<SingleMatchResponse, AxiosError<any, GenericErrorResponse>, any>(
-    "uploadNewScoreCardForCompetiorInMatch",
+    ["uploadNewScoreCardForCompetiorInMatch"],
     uploadScoreCardImage,
     {
         onSuccess: (data) => {

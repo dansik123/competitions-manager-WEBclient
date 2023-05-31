@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useMutation, useQuery } from "vue-query";
+import { useMutation, useQuery } from "@tanstack/vue-query";
 import { genericGetHttpRequest, genericPutHttpRequestNoParams } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse, UserDetailsResponse } from "@/types/HttpResponseTypes";
 import type { UserDetailsRequest } from "@/types/HttpRequestTypes";
@@ -29,7 +29,7 @@ const popUpSuccess: (msg: string, timeout: number) => void = inject("okayToastPo
 const fetchUser = async () => 
     await genericGetHttpRequest<UserDetailsResponse>(`/users/current`, {})
 const { isError, isLoading, error } = useQuery<UserDetailsResponse, GenericErrorResponse>(
-    'getSingleLogInUser', 
+    ['getSingleLogInUser'], 
     fetchUser,
     {
         onSuccess: (data) => {
@@ -47,7 +47,7 @@ const updateCurrentUserDetails = async (changedUser: UserDetailsRequest): Promis
     )
 
 const { mutate } = useMutation<UserDetailsResponse, AxiosError<any, GenericErrorResponse>, UserDetailsRequest>(
-    "updateLogInUser",
+    ["updateLogInUser"],
     updateCurrentUserDetails,
     {
         onSuccess: (data) => {

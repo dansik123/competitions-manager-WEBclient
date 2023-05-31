@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useQuery } from "vue-query";
+import { useQuery } from "@tanstack/vue-query";
 import { genericGetHttpRequest } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse, UserLeagueMatchesBooleanResponse } from "@/types/HttpResponseTypes";
 import { computed, inject, ref } from "vue";
@@ -44,7 +44,7 @@ const popUpError: (msg: string, timeout: number) => void = inject("errorToastPop
 const fetchLeagueData = async () => 
     await genericGetHttpRequest<UserLeagueMatchesBooleanResponse>(`/leagues/${props.leagueId}`, {})
 const { isError, isLoading, error } = useQuery<UserLeagueMatchesBooleanResponse, AxiosError<GenericErrorResponse, any>>(
-    'getLeaguesData', 
+    ['getLeaguesData'], 
     fetchLeagueData,
     {
         onSuccess: (data) => {

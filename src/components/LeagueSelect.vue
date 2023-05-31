@@ -3,7 +3,7 @@ import { ref } from "vue";
 import { genericGetHttpRequest } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse, LeagueSelect } from "@/types/HttpResponseTypes";
 import type { AxiosError } from 'axios';
-import { useQuery } from "vue-query";
+import { useQuery } from "@tanstack/vue-query";
 import { useAuthStore } from "@/stores/AuthorizationStore";
 
 const props = defineProps({
@@ -21,7 +21,7 @@ const authStore = useAuthStore();
 const fetchSelectableLeagues = async () => 
     await genericGetHttpRequest<Array<LeagueSelect>>('/leagues/selectable', { userId: authStore.getCurrentUserId})
 const { isError, isLoading, error } = useQuery<Array<LeagueSelect>, AxiosError<GenericErrorResponse, any>>(
-'getLeaguesForSelect',
+['getLeaguesForSelect'],
 fetchSelectableLeagues,
 {
     onSuccess: (responseData) => {

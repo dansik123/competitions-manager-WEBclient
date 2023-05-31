@@ -1,5 +1,5 @@
 <script setup lang="ts">
-	import { useMutation } from "vue-query";
+	import { useMutation } from "@tanstack/vue-query";
 	import type { IRegisterRequest } from "@/types/HttpRequestTypes";
 	import type { GenericResponse, GenericErrorResponse } from "@/types/HttpResponseTypes";
 	import { genericPostHttpRequestNoParams } from "@/apiHttp/RequestsApi";

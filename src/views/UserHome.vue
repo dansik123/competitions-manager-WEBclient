@@ -1,6 +1,6 @@
 <script setup lang="ts">
 	import { inject } from "vue";
-    import { useQuery } from "vue-query";
+    import { useQuery } from "@tanstack/vue-query";
     import { genericGetHttpRequest } from "@/apiHttp/RequestsApi";
     import type { User, GenericErrorResponse } from "@/types/HttpResponseTypes";
     import { useAuthStore } from '@/stores/AuthorizationStore';
@@ -14,7 +14,7 @@
         await genericGetHttpRequest<User>('/users/current', {})
     const { data, isError, isLoading, error } = 
         useQuery<User, AxiosError<GenericErrorResponse, any>>(
-        'getUser', 
+        ['getUser'], 
         fetchUserFn,
         {
             onSuccess: (data) => {

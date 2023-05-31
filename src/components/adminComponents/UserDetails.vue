@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useMutation, useQuery } from "vue-query";
+import { useMutation, useQuery } from "@tanstack/vue-query";
 import { genericGetHttpRequest, genericPutHttpRequestNoParams } from "@/apiHttp/RequestsApi";
 import type { AdminUserResponse, GenericErrorResponse } from "@/types/HttpResponseTypes";
 import type { AdminUserRequest } from "@/types/HttpRequestTypes";
@@ -33,7 +33,7 @@ const popUpError: (msg: string, timeout: number) => void = inject("errorToastPop
 const fetchUser = async () => 
     await genericGetHttpRequest<AdminUserResponse>(`/users/${props.userId}`, {})
 const { isError, isLoading, error } = useQuery<AdminUserResponse, GenericErrorResponse>(
-    'getSignleUser', 
+    ['getSignleUser'], 
     fetchUser,
     {
         onSuccess: (data) => {
@@ -52,7 +52,7 @@ await genericPutHttpRequestNoParams<AdminUserRequest ,any>(
 const popUpSuccess: (msg: string, timeout: number) => void = inject("okayToastPopUp", ()=>{})
 
 const { mutate } = useMutation<AdminUserResponse, AxiosError<any, GenericErrorResponse>, AdminUserRequest>(
-    "updateClub",
+    ["updateClub"],
     updateUserFn,
     {
         onSuccess: (data) => {

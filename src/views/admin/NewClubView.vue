@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { inject, ref } from 'vue';
 import { genericGetHttpRequest, genericPostHttpRequest } from '@/apiHttp/RequestsApi';
-import { useMutation, useQuery } from 'vue-query';
+import { useMutation, useQuery } from '@tanstack/vue-query';
 import type { ClubResponse, GenericErrorResponse } from '@/types/HttpResponseTypes';
 import type { AxiosError } from 'axios';
 import type { ICreateClubRequest } from '@/types/HttpRequestTypes';
@@ -15,7 +15,7 @@ const newClubRef = ref('')
 const fetchListOfClubs = async () => 
     await genericGetHttpRequest<Array<ClubResponse>>('/clubs', {})
 const { isError, isLoading, error, refetch } = useQuery<Array<ClubResponse>, AxiosError<GenericErrorResponse, any>>(
-'getClubsList',
+['getClubsList'],
 fetchListOfClubs,
 {
     onError: ()=>{
@@ -30,11 +30,11 @@ const addNewClubFn = async (newClub: ICreateClubRequest): Promise<ClubResponse> 
 
 
 const { mutate } = useMutation<ClubResponse, AxiosError<any, GenericErrorResponse>, ICreateClubRequest>(
-    "addNewClub",
+    ["addNewClub"],
     addNewClubFn,
     {
         onSuccess: (clubResponse) => {
-            refetch.value({})
+            refetch({})
             newClubRef.value = ''
             popUpSuccess(`New club ${clubResponse.clubName} has been added`, 5000)
         }, 

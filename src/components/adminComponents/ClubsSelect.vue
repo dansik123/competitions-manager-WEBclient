@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useMutation, useQuery } from "vue-query";
+import { useMutation, useQuery } from "@tanstack/vue-query";
 import { genericGetHttpRequest, genericPostHttpRequestNoParams, genericPutHttpRequestNoParams } from "@/apiHttp/RequestsApi";
 import type { ClubResponse, GenericErrorResponse, ClubMemberResponse } from "@/types/HttpResponseTypes";
 import { inject, ref } from "vue";
@@ -27,7 +27,7 @@ const fetchClubsFn = async () =>
     await genericGetHttpRequest<Array<ClubResponse>>('/clubs', {})
 const { data, isError, isLoading, error } = 
     useQuery<Array<ClubResponse>, GenericErrorResponse>(
-    'getClubList', 
+    ['getClubList'], 
     fetchClubsFn,
     {
         retry: 0
@@ -42,7 +42,7 @@ const addClubMemberFn = async (newUserMember: INewClubMemberIdRequest): Promise<
         `/clubs/${selectedClubRef.value.id}/members`,
         newUserMember)
 const addMutation = useMutation<ClubMemberResponse, AxiosError<any, GenericErrorResponse>, INewClubMemberIdRequest>(
-    "addClubMember",
+    ["addClubMember"],
     addClubMemberFn,
     {
         onSuccess: (responseData) =>{
@@ -64,7 +64,7 @@ const updateClubMemberFn = async (selectedClub: IClubRequest): Promise<ClubMembe
         selectedClub)
 
 const updateMutation = useMutation<ClubMemberResponse, AxiosError<any, GenericErrorResponse>, IClubRequest>(
-    "updateClub",
+    ["updateClub"],
     updateClubMemberFn,
     {
         onSuccess: (responseData) =>{

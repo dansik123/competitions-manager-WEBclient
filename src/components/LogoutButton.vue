@@ -1,6 +1,6 @@
 <script setup lang="ts">
 	import { inject } from "vue";
-    import { useMutation } from "vue-query";
+    import { useMutation } from "@tanstack/vue-query";
     import { genericPostHttpRequestNoParams } from "@/apiHttp/RequestsApi";
     import type { GenericErrorResponse, GenericResponse } from "@/types/HttpResponseTypes";
     import { useAuthStore } from "@/stores/AuthorizationStore";

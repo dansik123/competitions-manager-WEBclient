@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useQuery } from "vue-query";
+import { useQuery } from "@tanstack/vue-query";
 import { genericGetHttpRequest } from "@/apiHttp/RequestsApi";
 import type { ClubResponse, GenericErrorResponse } from "@/types/HttpResponseTypes";
 import type { AxiosError } from "axios";
@@ -51,7 +51,7 @@ const fetchClubFn = async (): Promise<ClubResponse> =>
 
 const { isLoading, error } = 
     useQuery<ClubResponse, AxiosError<GenericErrorResponse, any>>(
-        'getUserClub', fetchClubFn, 
+        ['getUserClub'], fetchClubFn, 
         {
             onSuccess: (data) => {
                 userClub.value = data

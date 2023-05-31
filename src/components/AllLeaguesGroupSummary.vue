@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useQuery } from "vue-query";
+import { useQuery } from "@tanstack/vue-query";
 import { genericGetHttpRequest } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse, LeagueRoundSlotPointsResponse, SummaryPointsRowResponse } from "@/types/HttpResponseTypes";
 import { ref, watch } from "vue";
@@ -19,7 +19,7 @@ watch(() => props.leaguesIdsStringArray, (newValue) => {
         leagueSummaryDataRef.value = []
         return
     }
-    refetch.value({})
+    refetch({})
 })
 
 const leagueSummaryDataRef = ref<Array<SummaryPointsRowResponse<LeagueRoundSlotPointsResponse>>>([]);
@@ -29,7 +29,7 @@ const fetchLeagueGroupSummaryMatches = async (leaguesIdsStringArray: String) =>
         `/leagues/summary`, {leaguesIds: leaguesIdsStringArray})
 const { isError, isLoading, refetch } = 
     useQuery<Array<SummaryPointsRowResponse<LeagueRoundSlotPointsResponse>>, AxiosError<GenericErrorResponse, any>>(
-    'getLeagueSummaryData', 
+    ['getLeagueSummaryData'], 
     () => fetchLeagueGroupSummaryMatches(props.leaguesIdsStringArray),
     {
         onSuccess: (data) =>{

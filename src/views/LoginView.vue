@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import router from '@/router';
 import { reactive, inject } from 'vue';
-import { useMutation } from 'vue-query';
+import { useMutation } from '@tanstack/vue-query';
 import type { ILoginRequest } from '@/types/HttpRequestTypes';
 import type { ITokenResponse, GenericErrorResponse } from '@/types/HttpResponseTypes';
 import { useAuthStore } from '@/stores/AuthorizationStore';

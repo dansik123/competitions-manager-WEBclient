@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useQuery } from "vue-query";
+import { useQuery } from "@tanstack/vue-query";
 import { genericGetHttpRequest } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse, SingleSlotUserPointsResponse, SummaryPointsRowResponse } from "@/types/HttpResponseTypes";
 import { ref, watch } from "vue";
@@ -19,7 +19,7 @@ const props = defineProps({
 })
 
 watch(() => props.areMatchesGenerated, () => {
-  refetch.value({})
+  refetch({})
 })
 
 const leagueSummaryDataRef = ref<Array<SummaryPointsRowResponse<SingleSlotUserPointsResponse>>>([]);
@@ -28,7 +28,7 @@ const fetchLeagueSummaryMatches = async (leagueId: number) =>
     await genericGetHttpRequest<Array<SummaryPointsRowResponse<SingleSlotUserPointsResponse>>>(`/leagues/${leagueId}/summary`, {})
 const { isError, isLoading, refetch } = 
     useQuery<Array<SummaryPointsRowResponse<SingleSlotUserPointsResponse>>, AxiosError<GenericErrorResponse, any>>(
-    'getLeagueSummaryData', 
+    ['getLeagueSummaryData'], 
     () => fetchLeagueSummaryMatches(props.leagueId),
     {
         onSuccess: (data) =>{
@@ -47,7 +47,7 @@ const { isError, isLoading, refetch } =
 
 const refreshTableData = () =>{
     leagueSummaryDataRef.value = []
-    refetch.value({})
+    refetch({})
 }
 
 

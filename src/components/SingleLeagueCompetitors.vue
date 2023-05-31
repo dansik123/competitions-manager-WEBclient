@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { inject, ref } from "vue";
-import { useQuery } from "vue-query";
+import { inject } from "vue";
+import { useQuery } from "@tanstack/vue-query";
 import { genericGetHttpRequest } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse, LeagueCompetitorResponse } from "@/types/HttpResponseTypes";
 import type { AxiosError } from 'axios';
@@ -18,7 +18,7 @@ const fetchLeagueCompetitors = async () =>
     await genericGetHttpRequest<Array<LeagueCompetitorResponse>>(`/leagues/${props.leagueId}/competitors`, {})
 const { data, isError, isLoading, error } = 
     useQuery<Array<LeagueCompetitorResponse>, AxiosError<GenericErrorResponse, any>>(
-    'getLeaguesCompetitors', 
+    ['getLeaguesCompetitors'], 
     fetchLeagueCompetitors,
     {
         onError: (error) => {

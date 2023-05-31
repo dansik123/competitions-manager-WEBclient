@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useMutation } from "vue-query";
+import { useMutation } from "@tanstack/vue-query";
 import { genericPostHttpRequestNoParams } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse } from "@/types/HttpResponseTypes";
 import { inject } from "vue";
@@ -23,7 +23,7 @@ const popUpError: (msg: string, timeout: number) => void = inject("errorToastPop
 const generateLeagueMatchesFn = async (): Promise<any> =>
     await genericPostHttpRequestNoParams<any, any>(`/leagues/${props.leagueId}/matches/generate`,{})
 const generateMutation = useMutation<any, AxiosError<any, GenericErrorResponse>, any>(
-    "generateMatchesForLeague",
+    ["generateMatchesForLeague"],
     generateLeagueMatchesFn,
     {
         onSuccess: () =>{

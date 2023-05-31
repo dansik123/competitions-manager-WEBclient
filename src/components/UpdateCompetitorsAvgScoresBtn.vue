@@ -3,7 +3,7 @@ import { inject, ref } from "vue";
 import { genericPostHttpRequestNoParams } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse } from "@/types/HttpResponseTypes";
 import type { AxiosError } from 'axios';
-import { useMutation } from "vue-query";
+import { useMutation } from "@tanstack/vue-query";
 import AcceptDialog from "@/components/AcceptDialog.vue";
 
 const props = defineProps({
@@ -25,7 +25,7 @@ const popUpError: (msg: string, timeout: number) => void = inject("errorToastPop
 const updateCompetitorsAverageScoresHttpFn = async () => 
     await genericPostHttpRequestNoParams(`/leagues/groups/${props.groupLeaguePrefix}/finish`, {})
 const { mutate } = useMutation<any, AxiosError<any, GenericErrorResponse>, any>(
-    "updateCompetitorsAverageScores",
+    ["updateCompetitorsAverageScores"],
     updateCompetitorsAverageScoresHttpFn,
     {
         onSuccess: () => {
