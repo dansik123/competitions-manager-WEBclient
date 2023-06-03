@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useQuery } from "vue-query";
+import { useQuery } from "@tanstack/vue-query";
 import { genericGetHttpRequest } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse, PagedResponse, PageQuerySortedParams, PaginationData, UserLeagueResponse } from "@/types/HttpResponseTypes";
 import { inject, ref } from "vue";
-import type { AxiosError } from "axios";
+import type { AxiosResponse } from "axios";
 import { paginationQuerySortedDefault, paginationResponseDefault } from "@/components/PaginationDefaults";
 import { useAuthStore } from "@/stores/AuthorizationStore";
 import { roundFormat } from "@/components/Formaters"
@@ -16,8 +16,8 @@ const popUpError: (msg: string, timeout: number) => void = inject("errorToastPop
 
 const fetchLeaguesPage = async (paginationData: PageQuerySortedParams) => 
     await genericGetHttpRequest<PagedResponse<UserLeagueResponse>>(`/leagues`, paginationData)
-const { data, isError, isLoading, error, refetch } = useQuery<PagedResponse<UserLeagueResponse>, AxiosError<GenericErrorResponse, any>>(
-    'getLeaguesPage', 
+const { data, isError, isLoading, error, refetch } = useQuery<PagedResponse<UserLeagueResponse>, AxiosResponse<GenericErrorResponse>>(
+    ['getLeaguesPage'], 
     () => fetchLeaguesPage(paginationQueryData.value),
     {
         onSuccess: (data) =>{
@@ -25,7 +25,7 @@ const { data, isError, isLoading, error, refetch } = useQuery<PagedResponse<User
             paginationDataRef.value.paginationNumber = data.number + 1
         },
         onError: (error) => {
-            popUpError(error.response?.data.message || 'Unknown error message', 5000)
+            popUpError(error.data.message || 'Unknown error message', 5000)
         },
         retry: 0 
     }
@@ -35,12 +35,12 @@ const updateContent = (newPageNumber: number) => {
     //the request page value starts from 0 therefore I have to substart 1
     //from pagination numbers value which starts from 1.
     paginationQueryData.value.page = newPageNumber - 1;
-    refetch.value({}) //refetch must have at least empty object to execute
+    refetch({}) //refetch must have at least empty object to execute
 }
 </script>
 <template>
     <span v-if="isLoading">Loading...</span>
-    <span v-else-if="isError">Error: {{ error?.message }}</span>
+    <span v-else-if="isError">Error: {{ error?.data.message }}</span>
     <VTable v-else>
         <thead>
             <tr>

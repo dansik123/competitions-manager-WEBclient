@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { inject, ref } from "vue";
-import { useQuery } from "vue-query";
+import { inject } from "vue";
+import { useQuery } from "@tanstack/vue-query";
 import { genericGetHttpRequest } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse, LeagueCompetitorResponse } from "@/types/HttpResponseTypes";
-import type { AxiosError } from 'axios';
+import type { AxiosResponse } from 'axios';
 
 const props = defineProps({
     leagueId: {
@@ -17,19 +17,19 @@ const popUpError: (msg: string, timeout: number) => void = inject("errorToastPop
 const fetchLeagueCompetitors = async () => 
     await genericGetHttpRequest<Array<LeagueCompetitorResponse>>(`/leagues/${props.leagueId}/competitors`, {})
 const { data, isError, isLoading, error } = 
-    useQuery<Array<LeagueCompetitorResponse>, AxiosError<GenericErrorResponse, any>>(
-    'getLeaguesCompetitors', 
+    useQuery<Array<LeagueCompetitorResponse>, AxiosResponse<GenericErrorResponse>>(
+    ['getLeaguesCompetitors'], 
     fetchLeagueCompetitors,
     {
         onError: (error) => {
-            popUpError(error.response?.data.message || 'Unknown error message', 5000)
+            popUpError(error.data.message || 'Unknown error message', 5000)
         },
         retry: 0
     })
 </script>
 <template>
     <span v-if="isLoading">Loading...</span>
-    <span v-else-if="isError">Error: {{ error?.message }}</span>
+    <span v-else-if="isError">Error: {{ error?.data.message }}</span>
     <VTable v-else>
         <thead>
             <tr>

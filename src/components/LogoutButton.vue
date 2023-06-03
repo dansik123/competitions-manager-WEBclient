@@ -1,22 +1,22 @@
 <script setup lang="ts">
 	import { inject } from "vue";
-    import { useMutation } from "vue-query";
+    import { useMutation } from "@tanstack/vue-query";
     import { genericPostHttpRequestNoParams } from "@/apiHttp/RequestsApi";
     import type { GenericErrorResponse, GenericResponse } from "@/types/HttpResponseTypes";
     import { useAuthStore } from "@/stores/AuthorizationStore";
     import router from '@/router'
-    import type { AxiosError } from 'axios';
+    import type { AxiosResponse } from 'axios';
 
 	const popUpError: (msg: string, timeout: number) => void = inject("errorToastPopUp", ()=>{})
 
     const authStore = useAuthStore()
     const logoutUserFn = async () => 
         await genericPostHttpRequestNoParams<any, GenericResponse>('/logout', {})
-    const { mutate } = useMutation<GenericResponse, AxiosError<GenericErrorResponse, any>, any>(
+    const { mutate } = useMutation<GenericResponse, AxiosResponse<GenericErrorResponse>, any>(
     logoutUserFn,
     {
         onError: (error)=>{
-            popUpError(error.response?.data.message || 'Unknown login error', 5000)
+            popUpError(error.data.message || 'Unknown login error', 5000)
         },
         onSuccess: () => {
             authStore.logout();

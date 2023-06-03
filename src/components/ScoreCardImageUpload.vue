@@ -2,8 +2,8 @@
 import { computed, inject, ref } from "vue";
 import { genericPostHttpRequestFormBodyNoParams } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse, SingleMatchResponse } from "@/types/HttpResponseTypes";
-import type { AxiosError } from 'axios';
-import { useMutation } from "vue-query";
+import type { AxiosResponse } from 'axios';
+import { useMutation } from "@tanstack/vue-query";
 
 const props = defineProps({
     matchId: {
@@ -30,8 +30,8 @@ const whichCompetitor = computed(() =>{
 const uploadScoreCardImage = async (imageFile: File) => 
     await genericPostHttpRequestFormBodyNoParams<SingleMatchResponse>(
         `/matches/${props.matchId}/${whichCompetitor.value}/scorecard`, imageFile)
-const { mutate } = useMutation<SingleMatchResponse, AxiosError<any, GenericErrorResponse>, any>(
-    "uploadNewScoreCardForCompetiorInMatch",
+const { mutate } = useMutation<SingleMatchResponse, AxiosResponse<GenericErrorResponse>, any>(
+    ["uploadNewScoreCardForCompetiorInMatch"],
     uploadScoreCardImage,
     {
         onSuccess: (data) => {
@@ -40,7 +40,7 @@ const { mutate } = useMutation<SingleMatchResponse, AxiosError<any, GenericError
             popUpSuccess('Image has been uploaded succesfully', 5000)
         }, 
         onError: (error)=>{
-			popUpError(error.response?.data.message || 'Unknown login error', 5000)
+			popUpError(error.data.message || 'Unknown login error', 5000)
 		},
         retry: 0
     }

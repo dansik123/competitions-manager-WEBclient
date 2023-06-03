@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useMutation, useQuery } from "vue-query";
+import { useMutation, useQuery } from "@tanstack/vue-query";
 import { genericGetHttpRequest, genericPostHttpRequestNoParams, genericPutHttpRequestNoParams } from "@/apiHttp/RequestsApi";
 import type { ClubResponse, GenericErrorResponse, ClubMemberResponse } from "@/types/HttpResponseTypes";
 import { inject, ref } from "vue";
-import type { AxiosError } from "axios";
+import type { AxiosResponse } from "axios";
 import type { IClubRequest, INewClubMemberIdRequest } from "@/types/HttpRequestTypes";
 
 const props = defineProps({
@@ -27,7 +27,7 @@ const fetchClubsFn = async () =>
     await genericGetHttpRequest<Array<ClubResponse>>('/clubs', {})
 const { data, isError, isLoading, error } = 
     useQuery<Array<ClubResponse>, GenericErrorResponse>(
-    'getClubList', 
+    ['getClubList'], 
     fetchClubsFn,
     {
         retry: 0
@@ -41,8 +41,8 @@ const addClubMemberFn = async (newUserMember: INewClubMemberIdRequest): Promise<
     await genericPostHttpRequestNoParams<INewClubMemberIdRequest, ClubMemberResponse>(
         `/clubs/${selectedClubRef.value.id}/members`,
         newUserMember)
-const addMutation = useMutation<ClubMemberResponse, AxiosError<any, GenericErrorResponse>, INewClubMemberIdRequest>(
-    "addClubMember",
+const addMutation = useMutation<ClubMemberResponse, AxiosResponse<GenericErrorResponse>, INewClubMemberIdRequest>(
+    ["addClubMember"],
     addClubMemberFn,
     {
         onSuccess: (responseData) =>{
@@ -53,7 +53,7 @@ const addMutation = useMutation<ClubMemberResponse, AxiosError<any, GenericError
             emits('changeClub', updatedClubRef.value);
         },
         onError: (error)=>{
-            popUpError(error.response?.data.message || 'Unknown login error', 5000)
+            popUpError(error.data.message || 'Unknown login error', 5000)
         }
     }
 )
@@ -63,8 +63,8 @@ const updateClubMemberFn = async (selectedClub: IClubRequest): Promise<ClubMembe
         `/clubs/${props.selectedClub?.id}/members/${props.userId}`,
         selectedClub)
 
-const updateMutation = useMutation<ClubMemberResponse, AxiosError<any, GenericErrorResponse>, IClubRequest>(
-    "updateClub",
+const updateMutation = useMutation<ClubMemberResponse, AxiosResponse<GenericErrorResponse>, IClubRequest>(
+    ["updateClub"],
     updateClubMemberFn,
     {
         onSuccess: (responseData) =>{
@@ -75,7 +75,7 @@ const updateMutation = useMutation<ClubMemberResponse, AxiosError<any, GenericEr
             emits('changeClub', updatedClubRef.value);
         },
         onError: (error)=>{
-            popUpError(error.response?.data.message || 'Unknown login error', 5000)
+            popUpError(error.data.message || 'Unknown login error', 5000)
         }
     }
 )

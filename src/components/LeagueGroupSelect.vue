@@ -2,8 +2,8 @@
 import { inject, ref, watch } from "vue";
 import { genericGetHttpRequest } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse } from "@/types/HttpResponseTypes";
-import type { AxiosError } from 'axios';
-import { useQuery } from "vue-query";
+import type { AxiosResponse } from 'axios';
+import { useQuery } from "@tanstack/vue-query";
 
 const props = defineProps({
     gunType: {
@@ -14,7 +14,7 @@ const props = defineProps({
 
 watch(() => props.gunType, () => {
     selectedLeagueGroup.value = ''
-    refetch.value({})
+    refetch({})
 })
 
 const emits = defineEmits(['selectedLeagueGroup'])
@@ -25,12 +25,12 @@ const selectedLeagueGroup = ref("")
 
 const fetchListOfLeagueGroups = async () => 
     await genericGetHttpRequest<Array<string>>('/leagues/groups', { gunType: props.gunType })
-const { isError, isLoading, error, refetch } = useQuery<Array<string>, AxiosError<GenericErrorResponse, any>>(
-'getLeagueGroupsList',
+const { isError, isLoading, error, refetch } = useQuery<Array<string>, AxiosResponse<GenericErrorResponse>>(
+['getLeagueGroupsList'],
 fetchListOfLeagueGroups,
 {
     onError: (error)=>{
-        popUpError(error.response?.data.message || 'Unknown fetch error', 5000)
+        popUpError(error.data.message || 'Unknown fetch error', 5000)
     },
     onSuccess: (responseData) => {
         selectOptionsRef.value = ['', ...responseData]
@@ -41,7 +41,7 @@ fetchListOfLeagueGroups,
     <div>
         <VContainer v-if="isError">
             <VRow>
-                <p>Error: {{ error?.message }}</p>
+                <p>Error: {{ error?.data.message }}</p>
             </VRow>
         </VContainer>
         <VContainer v-else>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useQuery } from "vue-query";
+import { useQuery } from "@tanstack/vue-query";
 import { genericGetHttpRequest } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse, UserMatchResponse } from "@/types/HttpResponseTypes";
 import { ref, watch } from "vue";
-import type { AxiosError } from "axios";
+import type { AxiosResponse } from "axios";
 import { userTableCellFormater, dateFormater } from "@/components/Formaters"
 
 const props = defineProps({
@@ -24,15 +24,15 @@ watch(() => props.leagueId, async (newLeagueId, oldLeagueId)=>{
     }
     //otherwise we reset query params to default ones and we set new gunType there too.
     //finally we repeate fetch to get table updated
-    refetch.value({});
+    refetch({});
 })
 
 const matchesDataRef = ref<Array<UserMatchResponse>>([]);
 const fetchAllUserMatchesInLeague = async (params: any) => 
     await genericGetHttpRequest<Array<UserMatchResponse>>(`/matches`, params)
 const { isError, isLoading, error, refetch } = 
-    useQuery<Array<UserMatchResponse>, AxiosError<GenericErrorResponse, any>>(
-    'getUserMatchesInLeague', 
+    useQuery<Array<UserMatchResponse>, AxiosResponse<GenericErrorResponse>>(
+    ['getUserMatchesInLeague'], 
     () => fetchAllUserMatchesInLeague({leagueId: props.leagueId, userId: props.userId}),
     {
         onSuccess: (data) =>{
@@ -45,7 +45,7 @@ const { isError, isLoading, error, refetch } =
 </script>
 <template>
     <span v-if="isLoading">Loading...</span>
-    <span v-else-if="isError">Error: {{ error?.response?.data.message}}</span>
+    <span v-else-if="isError">Error: {{ error?.data.message}}</span>
     <div v-else>
         <VContainer fluid>
             <VRow>

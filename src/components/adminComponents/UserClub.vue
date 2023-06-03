@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useQuery } from "vue-query";
+import { useQuery } from "@tanstack/vue-query";
 import { genericGetHttpRequest } from "@/apiHttp/RequestsApi";
 import type { ClubResponse, GenericErrorResponse } from "@/types/HttpResponseTypes";
-import type { AxiosError } from "axios";
+import type { AxiosResponse } from "axios";
 import { computed, inject, ref } from "vue";
 import ClubSelect from '@/components/adminComponents/ClubsSelect.vue'
 
@@ -23,7 +23,7 @@ const noClubDisplay = computed(() => {
     if(error != null && error.value != null){
         //previouse get request not found club and we are not changing club
         //and club value was not changed/saved by select component
-        return error?.value.response?.status == 404 && 
+        return error?.value.status == 404 && 
             !editMode.value && !isSelectUpdatedClub.value
     }
     return false
@@ -34,7 +34,7 @@ const allowToEdit = computed(() => {
 const insertMode = computed(() => {
     if(error != null && error.value != null){
         //previouse get request not found club and we are trying to add one
-        return error.value.response?.status == 404 && 
+        return error.value.status == 404 && 
         editMode.value
     }
     return false
@@ -50,12 +50,12 @@ const fetchClubFn = async (): Promise<ClubResponse> =>
     genericGetHttpRequest<ClubResponse>(`/users/${props.userId}/club`, {});
 
 const { isLoading, error } = 
-    useQuery<ClubResponse, AxiosError<GenericErrorResponse, any>>(
-        'getUserClub', fetchClubFn, 
+    useQuery<ClubResponse, AxiosResponse<GenericErrorResponse>>(
+        ['getUserClub'], fetchClubFn, 
         {
             onSuccess: (data) => {
                 userClub.value = data
-            },  
+            },
             retry: 0 
         }
     )

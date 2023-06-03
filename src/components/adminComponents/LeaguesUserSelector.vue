@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useQuery } from "vue-query";
+import { useQuery } from "@tanstack/vue-query";
 import { genericGetHttpRequest } from "@/apiHttp/RequestsApi";
 import type { PagedResponse, PaginationData, GenericErrorResponse, LeagueSelectorPageQueryParam, MemberUserResponse } from "@/types/HttpResponseTypes";
-import type { AxiosError } from 'axios';
+import type { AxiosResponse } from 'axios';
 import { leagueQueryRequestDefaults, paginationResponseDefault } from "@/components/PaginationDefaults";
 import { userTableCellFormater } from "@/components/Formaters";
 import { watch } from "vue";
@@ -36,21 +36,21 @@ watch(() => props.selectedLeagueGunType, async (newGunType, oldGunType)=>{
     paginationQueryData.value = leagueQueryRequestDefaults;
     paginationQueryData.value.gunType = newGunType;
     resetSelectedUsers()
-    refetch.value({});
+    refetch({});
 })
 
 const updateContent = (newPageNumber: number) => {
     //the request page value starts from 0 therefore I have to substart 1
     //from pagination numbers value which starts from 1.
     paginationQueryData.value.page = newPageNumber - 1;
-    refetch.value({}) //refetch must have at least empty object to execute
+    refetch({}) //refetch must have at least empty object to execute
 }
 
 const fetchUsersForLeagueFn = async (paginationParams: LeagueSelectorPageQueryParam) => 
     await genericGetHttpRequest<PagedResponse<MemberUserResponse>>('/users/league-select', paginationParams)
 const { isError, isLoading, error, refetch } = 
-    useQuery<PagedResponse<MemberUserResponse>, AxiosError<GenericErrorResponse, any>>(
-    'getUsersPagedList', 
+    useQuery<PagedResponse<MemberUserResponse>, AxiosResponse<GenericErrorResponse>>(
+    ['getUsersPagedList'], 
     () => fetchUsersForLeagueFn(paginationQueryData.value),
     {
         onSuccess: (data) =>{
@@ -100,7 +100,7 @@ const btnClickGenerate = () =>{
 <template>
     <h1>List of users to choose for leagues</h1>
     <span v-if="isLoading">Loading...</span>
-    <span v-else-if="isError">Error: {{ error?.response?.data.message }}</span>
+    <span v-else-if="isError">Error: {{ error?.data.message }}</span>
     <VRow v-else>
         <VCol cols="6">
             <VTable>

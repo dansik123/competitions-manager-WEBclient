@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useMutation, useQuery } from "vue-query";
+import { useMutation, useQuery } from "@tanstack/vue-query";
 import { genericGetHttpRequest, genericPutHttpRequestNoParams } from "@/apiHttp/RequestsApi";
 import type { AdminUserResponse, GenericErrorResponse } from "@/types/HttpResponseTypes";
 import type { AdminUserRequest } from "@/types/HttpRequestTypes";
 import { inject, ref } from "vue";
-import type { AxiosError } from "axios";
+import type { AxiosResponse } from "axios";
 const props = defineProps({
     userId: {
         type: Number,
@@ -33,7 +33,7 @@ const popUpError: (msg: string, timeout: number) => void = inject("errorToastPop
 const fetchUser = async () => 
     await genericGetHttpRequest<AdminUserResponse>(`/users/${props.userId}`, {})
 const { isError, isLoading, error } = useQuery<AdminUserResponse, GenericErrorResponse>(
-    'getSignleUser', 
+    ['getSignleUser'], 
     fetchUser,
     {
         onSuccess: (data) => {
@@ -51,8 +51,8 @@ await genericPutHttpRequestNoParams<AdminUserRequest ,any>(
 )
 const popUpSuccess: (msg: string, timeout: number) => void = inject("okayToastPopUp", ()=>{})
 
-const { mutate } = useMutation<AdminUserResponse, AxiosError<any, GenericErrorResponse>, AdminUserRequest>(
-    "updateClub",
+const { mutate } = useMutation<AdminUserResponse, AxiosResponse<GenericErrorResponse>, AdminUserRequest>(
+    ["updateClub"],
     updateUserFn,
     {
         onSuccess: (data) => {
@@ -60,7 +60,7 @@ const { mutate } = useMutation<AdminUserResponse, AxiosError<any, GenericErrorRe
             popUpSuccess('User details has been updated', 5000)
         }, 
         onError: (error)=>{
-            popUpError(error.response?.data.message || 'Unknown login error', 5000)
+            popUpError(error.data.message || 'Unknown login error', 5000)
         },
         retry: 0
     }

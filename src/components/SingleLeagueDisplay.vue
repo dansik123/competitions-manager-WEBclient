@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useQuery } from "vue-query";
+import { useQuery } from "@tanstack/vue-query";
 import { genericGetHttpRequest } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse, UserLeagueMatchesBooleanResponse } from "@/types/HttpResponseTypes";
 import { computed, inject, ref } from "vue";
-import type { AxiosError } from "axios";
+import type { AxiosResponse } from "axios";
 import { roundFormat } from "@/components/Formaters"
 
 const props = defineProps({
@@ -43,8 +43,8 @@ const popUpError: (msg: string, timeout: number) => void = inject("errorToastPop
 
 const fetchLeagueData = async () => 
     await genericGetHttpRequest<UserLeagueMatchesBooleanResponse>(`/leagues/${props.leagueId}`, {})
-const { isError, isLoading, error } = useQuery<UserLeagueMatchesBooleanResponse, AxiosError<GenericErrorResponse, any>>(
-    'getLeaguesData', 
+const { isError, isLoading, error } = useQuery<UserLeagueMatchesBooleanResponse, AxiosResponse<GenericErrorResponse>>(
+    ['getLeaguesData'], 
     fetchLeagueData,
     {
         onSuccess: (data) => {
@@ -53,7 +53,7 @@ const { isError, isLoading, error } = useQuery<UserLeagueMatchesBooleanResponse,
             emit('update:leagueHasMatches', data.matchesGenerated)
         },  
         onError: (error) => {
-            popUpError(error.response?.data.message || 'Unknown error message', 5000)
+            popUpError(error.data.message || 'Unknown error message', 5000)
         },
         retry: 0 
     }
@@ -61,7 +61,7 @@ const { isError, isLoading, error } = useQuery<UserLeagueMatchesBooleanResponse,
 </script>
 <template>
     <span v-if="isLoading">Loading...</span>
-    <span v-else-if="isError">Error: {{ error?.message }}</span>
+    <span v-else-if="isError">Error: {{ error?.data.message }}</span>
     <VCard v-else>
         <VContainer> 
             <VRow>

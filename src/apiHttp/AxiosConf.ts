@@ -32,9 +32,13 @@ useCustomAxios.interceptors.request.use(config =>{
 // link to the video is above
 // Private Axios Instance
 // (22:31) useAxiosPrivate with interceptors
+
+//In this method Promise reject used there cause logging error in by query.ts
+//the only way to get rid of it is to not use Promise but then it is treated as 
+//plain non-error response
 useCustomAxios.interceptors.response.use(
     (response) => {
-      return response
+      return Promise.resolve(response)
     },
     async (error) => {
       const authStore = useAuthStore()
@@ -53,7 +57,7 @@ useCustomAxios.interceptors.response.use(
           return useCustomAxios(originalRequest)
         }else if(exceptionRefreshUrls.includes(originalRequest.url)){
           //403 error caused by refresh URLs
-          return Promise.reject(error);
+          return Promise.reject(errorResponse);
         }
 
         //other types of 403 errors should imedialty cause log out because 
@@ -62,10 +66,10 @@ useCustomAxios.interceptors.response.use(
         //user will no see anything
         authStore.logout()
         navRouter.push({name:'home'})
-        return Promise.reject(error);
+        return Promise.reject(errorResponse);
       }
 
-      return Promise.reject(error);
+      return Promise.reject(errorResponse);
     }
 );
 

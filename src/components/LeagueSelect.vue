@@ -2,8 +2,8 @@
 import { ref } from "vue";
 import { genericGetHttpRequest } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse, LeagueSelect } from "@/types/HttpResponseTypes";
-import type { AxiosError } from 'axios';
-import { useQuery } from "vue-query";
+import type { AxiosResponse } from 'axios';
+import { useQuery } from "@tanstack/vue-query";
 import { useAuthStore } from "@/stores/AuthorizationStore";
 
 const props = defineProps({
@@ -20,8 +20,8 @@ const authStore = useAuthStore();
 
 const fetchSelectableLeagues = async () => 
     await genericGetHttpRequest<Array<LeagueSelect>>('/leagues/selectable', { userId: authStore.getCurrentUserId})
-const { isError, isLoading, error } = useQuery<Array<LeagueSelect>, AxiosError<GenericErrorResponse, any>>(
-'getLeaguesForSelect',
+const { isError, isLoading, error } = useQuery<Array<LeagueSelect>, AxiosResponse<GenericErrorResponse>>(
+['getLeaguesForSelect'],
 fetchSelectableLeagues,
 {
     onSuccess: (responseData) => {
@@ -55,7 +55,7 @@ fetchSelectableLeagues,
         </VContainer>
         <VContainer v-else>
             <VRow>
-                <p>Error: {{ error?.response?.data.message }}</p>
+                <p>Error: {{ error?.data.message }}</p>
             </VRow>
         </VContainer>
     </div>

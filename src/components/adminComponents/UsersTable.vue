@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { inject, ref } from "vue";
-import { useQuery } from "vue-query";
+import { useQuery } from "@tanstack/vue-query";
 import { genericGetHttpRequest } from "@/apiHttp/RequestsApi";
 import type { PageQueryParams, PagedResponse, PaginationData, AdminUserResponse, GenericErrorResponse } from "@/types/HttpResponseTypes";
-import type { AxiosError } from 'axios';
+import type { AxiosResponse } from 'axios';
 import { paginationQueryRequestDefault, paginationResponseDefault } from "../PaginationDefaults";
 
 const paginationData = ref<PaginationData>(paginationResponseDefault)
@@ -14,7 +14,7 @@ const updateContent = (newPageNumber: number) => {
     //the request page value starts from 0 therefore I have to substart 1
     //from pagination numbers value which starts from 1.
     paginationQueryData.value.page = newPageNumber - 1;
-    refetch.value({}) //refetch must have at least empty object to execute
+    refetch({}) //refetch must have at least empty object to execute
 }
 
 const popUpError: (msg: string, timeout: number) => void = inject("errorToastPopUp", ()=>{})
@@ -22,8 +22,8 @@ const popUpError: (msg: string, timeout: number) => void = inject("errorToastPop
 const fetchUsersAdminListFn = async (paginationParams:PageQueryParams) => 
     await genericGetHttpRequest<PagedResponse<AdminUserResponse>>('/users', paginationParams)
 const { data, isError, isLoading, error, refetch } = 
-    useQuery<PagedResponse<AdminUserResponse>, AxiosError<GenericErrorResponse, any>>(
-    'getUsersPagedList', 
+    useQuery<PagedResponse<AdminUserResponse>, AxiosResponse<GenericErrorResponse>>(
+    ['getUsersPagedList'], 
     () => fetchUsersAdminListFn(paginationQueryData.value),
     {
         onSuccess: (data) =>{
@@ -31,14 +31,14 @@ const { data, isError, isLoading, error, refetch } =
             paginationData.value.paginationNumber = data.number + 1
         },
         onError: (error) => {
-            popUpError(error.response?.data.message || 'Unknown error message', 5000)
+            popUpError(error.data.message || 'Unknown error message', 5000)
         },
         retry: 0
     })
 </script>
 <template>
     <span v-if="isLoading">Loading...</span>
-    <span v-else-if="isError">Error: {{ error?.message }}</span>
+    <span v-else-if="isError">Error: {{ error?.data.message }}</span>
     <VTable v-else>
         <thead>
             <tr>

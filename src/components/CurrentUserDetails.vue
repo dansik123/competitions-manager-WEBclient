@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useMutation, useQuery } from "vue-query";
+import { useMutation, useQuery } from "@tanstack/vue-query";
 import { genericGetHttpRequest, genericPutHttpRequestNoParams } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse, UserDetailsResponse } from "@/types/HttpResponseTypes";
 import type { UserDetailsRequest } from "@/types/HttpRequestTypes";
 import { inject, ref } from "vue";
-import type { AxiosError } from "axios";
+import type { AxiosResponse } from "axios";
 const props = defineProps({
     isSuccess: {
         type: Boolean,
@@ -29,7 +29,7 @@ const popUpSuccess: (msg: string, timeout: number) => void = inject("okayToastPo
 const fetchUser = async () => 
     await genericGetHttpRequest<UserDetailsResponse>(`/users/current`, {})
 const { isError, isLoading, error } = useQuery<UserDetailsResponse, GenericErrorResponse>(
-    'getSingleLogInUser', 
+    ['getSingleLogInUser'], 
     fetchUser,
     {
         onSuccess: (data) => {
@@ -46,8 +46,8 @@ const updateCurrentUserDetails = async (changedUser: UserDetailsRequest): Promis
         changedUser
     )
 
-const { mutate } = useMutation<UserDetailsResponse, AxiosError<any, GenericErrorResponse>, UserDetailsRequest>(
-    "updateLogInUser",
+const { mutate } = useMutation<UserDetailsResponse, AxiosResponse<GenericErrorResponse>, UserDetailsRequest>(
+    ["updateLogInUser"],
     updateCurrentUserDetails,
     {
         onSuccess: (data) => {
@@ -55,7 +55,7 @@ const { mutate } = useMutation<UserDetailsResponse, AxiosError<any, GenericError
             popUpSuccess('User details has been updated', 5000)
         }, 
         onError: (error)=>{
-			popUpError(error.response?.data.message || 'Unknown login error', 5000)
+			popUpError(error.data.message || 'Unknown login error', 5000)
 		},
         retry: 0
     }

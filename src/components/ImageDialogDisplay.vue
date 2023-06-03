@@ -1,10 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, ref, type PropType } from "vue";
-import { genericGetHttpRequest, genericPostHttpRequestFormBodyNoParams } from "@/apiHttp/RequestsApi";
-import type { GenericErrorResponse, SingleMatchResponse } from "@/types/HttpResponseTypes";
-import type { AxiosError } from 'axios';
-import { useMutation, useQuery } from "vue-query";
-import { distanceAndSkiddingToXY } from "@popperjs/core/lib/modifiers/offset";
+import { computed, ref, type PropType } from "vue";
 
 const props = defineProps({
     matchId: {

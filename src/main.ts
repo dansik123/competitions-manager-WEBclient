@@ -3,7 +3,7 @@ import { createPinia } from 'pinia'
 import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
-import { VueQueryPlugin } from "vue-query";
+import { VueQueryPlugin } from "@tanstack/vue-query";
 import { fa } from 'vuetify/iconsets/fa'
 import { mdi, aliases } from 'vuetify/iconsets/mdi'
 import { setupCalendar, Calendar, DatePicker } from 'v-calendar'
