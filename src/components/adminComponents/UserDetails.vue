@@ -4,7 +4,7 @@ import { genericGetHttpRequest, genericPutHttpRequestNoParams } from "@/apiHttp/
 import type { AdminUserResponse, GenericErrorResponse } from "@/types/HttpResponseTypes";
 import type { AdminUserRequest } from "@/types/HttpRequestTypes";
 import { inject, ref } from "vue";
-import type { AxiosError } from "axios";
+import type { AxiosResponse } from "axios";
 const props = defineProps({
     userId: {
         type: Number,
@@ -51,7 +51,7 @@ await genericPutHttpRequestNoParams<AdminUserRequest ,any>(
 )
 const popUpSuccess: (msg: string, timeout: number) => void = inject("okayToastPopUp", ()=>{})
 
-const { mutate } = useMutation<AdminUserResponse, AxiosError<any, GenericErrorResponse>, AdminUserRequest>(
+const { mutate } = useMutation<AdminUserResponse, AxiosResponse<GenericErrorResponse>, AdminUserRequest>(
     ["updateClub"],
     updateUserFn,
     {
@@ -60,7 +60,7 @@ const { mutate } = useMutation<AdminUserResponse, AxiosError<any, GenericErrorRe
             popUpSuccess('User details has been updated', 5000)
         }, 
         onError: (error)=>{
-            popUpError(error.response?.data.message || 'Unknown login error', 5000)
+            popUpError(error.data.message || 'Unknown login error', 5000)
         },
         retry: 0
     }

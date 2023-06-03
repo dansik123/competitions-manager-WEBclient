@@ -5,7 +5,7 @@
 	import { genericPostHttpRequestNoParams } from "@/apiHttp/RequestsApi";
     import { reactive, inject } from 'vue';
 	import router  from "@/router";
-	import type { AxiosError } from 'axios';
+	import type { AxiosResponse } from 'axios';
 
 	const popUpError: (msg: string, timeout: number) => void = inject("errorToastPopUp", ()=>{})
 
@@ -20,11 +20,11 @@
 	const registerFn = async (registerData: IRegisterRequest) => 
 		await genericPostHttpRequestNoParams<IRegisterRequest, GenericResponse>(
 			'/register', registerData);
-	const { mutate } = useMutation<GenericResponse, AxiosError<GenericErrorResponse, any>, IRegisterRequest>(
+	const { mutate } = useMutation<GenericResponse, AxiosResponse<GenericErrorResponse>, IRegisterRequest>(
 		registerFn,
 		{
 			onError: (error)=>{
-				popUpError(error.response?.data.message || 'Unknown register error', 5000)
+				popUpError(error.data.message || 'Unknown register error', 5000)
 			},
 			onSuccess: (data) => {
 				resetInput()

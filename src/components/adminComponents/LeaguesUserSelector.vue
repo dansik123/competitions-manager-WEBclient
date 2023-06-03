@@ -3,7 +3,7 @@ import { ref } from "vue";
 import { useQuery } from "@tanstack/vue-query";
 import { genericGetHttpRequest } from "@/apiHttp/RequestsApi";
 import type { PagedResponse, PaginationData, GenericErrorResponse, LeagueSelectorPageQueryParam, MemberUserResponse } from "@/types/HttpResponseTypes";
-import type { AxiosError } from 'axios';
+import type { AxiosResponse } from 'axios';
 import { leagueQueryRequestDefaults, paginationResponseDefault } from "@/components/PaginationDefaults";
 import { userTableCellFormater } from "@/components/Formaters";
 import { watch } from "vue";
@@ -49,7 +49,7 @@ const updateContent = (newPageNumber: number) => {
 const fetchUsersForLeagueFn = async (paginationParams: LeagueSelectorPageQueryParam) => 
     await genericGetHttpRequest<PagedResponse<MemberUserResponse>>('/users/league-select', paginationParams)
 const { isError, isLoading, error, refetch } = 
-    useQuery<PagedResponse<MemberUserResponse>, AxiosError<GenericErrorResponse, any>>(
+    useQuery<PagedResponse<MemberUserResponse>, AxiosResponse<GenericErrorResponse>>(
     ['getUsersPagedList'], 
     () => fetchUsersForLeagueFn(paginationQueryData.value),
     {
@@ -100,7 +100,7 @@ const btnClickGenerate = () =>{
 <template>
     <h1>List of users to choose for leagues</h1>
     <span v-if="isLoading">Loading...</span>
-    <span v-else-if="isError">Error: {{ error?.response?.data.message }}</span>
+    <span v-else-if="isError">Error: {{ error?.data.message }}</span>
     <VRow v-else>
         <VCol cols="6">
             <VTable>

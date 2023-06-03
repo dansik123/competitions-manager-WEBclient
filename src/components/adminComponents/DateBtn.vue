@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { genericPatchHttpRequestNoParams } from '@/apiHttp/RequestsApi';
 import type { GenericErrorResponse, UserMatchResponse } from '@/types/HttpResponseTypes';
-import type { AxiosError } from 'axios';
+import type { AxiosResponse } from 'axios';
 import { inject, ref, type PropType } from 'vue';
 import { useMutation } from '@tanstack/vue-query';
 import { dateRequestFormater } from '@/components/Formaters';
@@ -31,7 +31,7 @@ const popUpError: (msg: string, timeout: number) => void = inject("errorToastPop
 
 const patchMatchDateHttpFn = async (dateBody: any) => 
     await genericPatchHttpRequestNoParams<any, UserMatchResponse>(`/matches/${props.matchId}/date`, dateBody)
-const { mutate } = useMutation<UserMatchResponse, AxiosError<any, GenericErrorResponse>, any>(
+const { mutate } = useMutation<UserMatchResponse, AxiosResponse<GenericErrorResponse>, any>(
     ["updateMatchDate"],
     patchMatchDateHttpFn,
     {
@@ -41,7 +41,7 @@ const { mutate } = useMutation<UserMatchResponse, AxiosError<any, GenericErrorRe
             showDatePicker.value = false
         }, 
         onError: (error)=>{
-			popUpError(error.response?.data.message || 'Unknown login error', 5000)
+			popUpError(error.data.message || 'Unknown login error', 5000)
 		},
         retry: 0
     }

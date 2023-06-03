@@ -3,7 +3,7 @@ import { inject, ref } from 'vue';
 import { genericGetHttpRequest, genericPostHttpRequest } from '@/apiHttp/RequestsApi';
 import { useMutation, useQuery } from '@tanstack/vue-query';
 import type { ClubResponse, GenericErrorResponse } from '@/types/HttpResponseTypes';
-import type { AxiosError } from 'axios';
+import type { AxiosResponse } from 'axios';
 import type { ICreateClubRequest } from '@/types/HttpRequestTypes';
 
 const popUpError: (msg: string, timeout: number) => void = inject("errorToastPopUp", ()=>{})
@@ -14,7 +14,7 @@ const newClubRef = ref('')
 
 const fetchListOfClubs = async () => 
     await genericGetHttpRequest<Array<ClubResponse>>('/clubs', {})
-const { isError, isLoading, error, refetch } = useQuery<Array<ClubResponse>, AxiosError<GenericErrorResponse, any>>(
+const { isError, isLoading, error, refetch } = useQuery<Array<ClubResponse>, AxiosResponse<GenericErrorResponse>>(
 ['getClubsList'],
 fetchListOfClubs,
 {
@@ -29,7 +29,7 @@ const addNewClubFn = async (newClub: ICreateClubRequest): Promise<ClubResponse> 
     await genericPostHttpRequest<ICreateClubRequest, ClubResponse>(`/clubs`, newClub, {})
 
 
-const { mutate } = useMutation<ClubResponse, AxiosError<any, GenericErrorResponse>, ICreateClubRequest>(
+const { mutate } = useMutation<ClubResponse, AxiosResponse<GenericErrorResponse>, ICreateClubRequest>(
     ["addNewClub"],
     addNewClubFn,
     {
@@ -39,7 +39,7 @@ const { mutate } = useMutation<ClubResponse, AxiosError<any, GenericErrorRespons
             popUpSuccess(`New club ${clubResponse.clubName} has been added`, 5000)
         }, 
         onError: (error)=>{
-			popUpError(error.response?.data.message || 'Unknown login error', 5000)
+			popUpError(error.data.message || 'Unknown login error', 5000)
 		},
         retry: 0
     }
@@ -69,7 +69,7 @@ const addClub = () =>{
             </VRow>
             <VRow v-else-if="isError">
                 <VCol>
-                    <div class="title text-h5">{{ error?.response?.data.message }}</div>
+                    <div class="title text-h5">{{ error?.data.message }}</div>
                 </VCol>
             </VRow>
             <VRow align="center" flex v-else>

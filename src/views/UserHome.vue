@@ -4,7 +4,7 @@
     import { genericGetHttpRequest } from "@/apiHttp/RequestsApi";
     import type { User, GenericErrorResponse } from "@/types/HttpResponseTypes";
     import { useAuthStore } from '@/stores/AuthorizationStore';
-    import type { AxiosError } from 'axios';
+    import type { AxiosResponse } from 'axios';
     
     const authStore = useAuthStore();
 
@@ -13,7 +13,7 @@
     const fetchUserFn = async () => 
         await genericGetHttpRequest<User>('/users/current', {})
     const { data, isError, isLoading, error } = 
-        useQuery<User, AxiosError<GenericErrorResponse, any>>(
+        useQuery<User, AxiosResponse<GenericErrorResponse>>(
         ['getUser'], 
         fetchUserFn,
         {
@@ -21,14 +21,14 @@
 				authStore.setUserDetails(data.id, data.role)
 			},
             onError: (error) => {
-				popUpError(error.response?.data.message || 'Unknown error message', 5000)
+				popUpError(error.data.message || 'Unknown error message', 5000)
             },
             retry: 0
         })
 </script>
 <template>
     <span v-if="isLoading">Loading...</span>
-    <span v-else-if="isError">Error: {{ error?.message }}</span>
+    <span v-else-if="isError">Error: {{ error?.data.message }}</span>
     <div v-else>
         <h1>Hello 
             <span id="user_firstname">{{ data?.firstname }}</span>

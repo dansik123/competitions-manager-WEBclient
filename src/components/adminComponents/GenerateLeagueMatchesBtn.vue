@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/vue-query";
 import { genericPostHttpRequestNoParams } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse } from "@/types/HttpResponseTypes";
 import { inject } from "vue";
-import type { AxiosError } from "axios";
+import type { AxiosResponse } from "axios";
 
 const props = defineProps({
     leagueId: {
@@ -22,7 +22,7 @@ const popUpError: (msg: string, timeout: number) => void = inject("errorToastPop
 
 const generateLeagueMatchesFn = async (): Promise<any> =>
     await genericPostHttpRequestNoParams<any, any>(`/leagues/${props.leagueId}/matches/generate`,{})
-const generateMutation = useMutation<any, AxiosError<any, GenericErrorResponse>, any>(
+const generateMutation = useMutation<any, AxiosResponse<GenericErrorResponse>, any>(
     ["generateMatchesForLeague"],
     generateLeagueMatchesFn,
     {
@@ -31,7 +31,7 @@ const generateMutation = useMutation<any, AxiosError<any, GenericErrorResponse>,
             emits('update:leagueHasMatches', true);
         },
         onError: (error)=>{
-            popUpError(error.response?.data.message || 'Unknown login error', 5000)
+            popUpError(error.data.message || 'Unknown login error', 5000)
         }
     }
 )

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { genericPatchHttpRequestNoParams } from '@/apiHttp/RequestsApi';
 import type { GenericErrorResponse, SingleMatchResponse } from '@/types/HttpResponseTypes';
-import type { AxiosError } from 'axios';
+import type { AxiosResponse } from 'axios';
 import { inject, ref } from 'vue';
 import { useMutation } from '@tanstack/vue-query';
 import { computed } from '@vue/reactivity';
@@ -40,7 +40,7 @@ const popUpError: (msg: string, timeout: number) => void = inject("errorToastPop
 
 const patchMatchScoresHttpFn = async (scoresBody: UpdateMatchScoreResult) => 
     await genericPatchHttpRequestNoParams<UpdateMatchScoreResult, SingleMatchResponse>(`/matches/${props.matchId}/result`, scoresBody)
-const { mutate } = useMutation<SingleMatchResponse, AxiosError<any, GenericErrorResponse>, any>(
+const { mutate } = useMutation<SingleMatchResponse, AxiosResponse<GenericErrorResponse>, any>(
     ["updateMatchScoreResults"],
     patchMatchScoresHttpFn,
     {
@@ -54,7 +54,7 @@ const { mutate } = useMutation<SingleMatchResponse, AxiosError<any, GenericError
         onError: (error)=>{
             matchResultCompetitor1Ref.value = matchResultCompetitor1Input.value
             matchResultCompetitor2Ref.value = matchResultCompetitor2Input.value
-			popUpError(error.response?.data.message || 'Unknown login error', 5000)
+			popUpError(error.data.message || 'Unknown login error', 5000)
             
 		},
         retry: 0

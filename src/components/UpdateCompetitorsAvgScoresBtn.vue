@@ -2,7 +2,7 @@
 import { inject, ref } from "vue";
 import { genericPostHttpRequestNoParams } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse } from "@/types/HttpResponseTypes";
-import type { AxiosError } from 'axios';
+import type { AxiosResponse } from 'axios';
 import { useMutation } from "@tanstack/vue-query";
 import AcceptDialog from "@/components/AcceptDialog.vue";
 
@@ -24,7 +24,7 @@ const popUpError: (msg: string, timeout: number) => void = inject("errorToastPop
 
 const updateCompetitorsAverageScoresHttpFn = async () => 
     await genericPostHttpRequestNoParams(`/leagues/groups/${props.groupLeaguePrefix}/finish`, {})
-const { mutate } = useMutation<any, AxiosError<any, GenericErrorResponse>, any>(
+const { mutate } = useMutation<any, AxiosResponse<GenericErrorResponse>, any>(
     ["updateCompetitorsAverageScores"],
     updateCompetitorsAverageScoresHttpFn,
     {
@@ -32,7 +32,7 @@ const { mutate } = useMutation<any, AxiosError<any, GenericErrorResponse>, any>(
             popUpSuccess('League group all competitors average scores have been updated', 5000)
         }, 
         onError: (error)=>{
-			popUpError(error.response?.data.message || 'Unknown login error', 5000)
+			popUpError(error.data.message || 'Unknown login error', 5000)
 		},
         retry: 0
     }

@@ -2,7 +2,7 @@
 import { inject, ref } from "vue";
 import { genericDeleteHttpRequestNoParamsNoBody } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse } from "@/types/HttpResponseTypes";
-import type { AxiosError } from 'axios';
+import type { AxiosResponse } from 'axios';
 import { useMutation } from "@tanstack/vue-query";
 import navRouter from "@/router";
 import AcceptDialog from "@/components/AcceptDialog.vue";
@@ -21,7 +21,7 @@ const popUpError: (msg: string, timeout: number) => void = inject("errorToastPop
 
 const deleteLeagueMatchesHttpFn = async () => 
     await genericDeleteHttpRequestNoParamsNoBody(`/leagues/${props.leagueId}/matches`)
-const { mutate } = useMutation<any, AxiosError<any, GenericErrorResponse>, any>(
+const { mutate } = useMutation<any, AxiosResponse<GenericErrorResponse>, any>(
     ["deleteLeagueMatchesById"],
     deleteLeagueMatchesHttpFn,
     {
@@ -30,7 +30,7 @@ const { mutate } = useMutation<any, AxiosError<any, GenericErrorResponse>, any>(
             navRouter.go(0)
         }, 
         onError: (error)=>{
-			popUpError(error.response?.data.message || 'Unknown login error', 5000)
+			popUpError(error.data.message || 'Unknown login error', 5000)
 		},
         retry: 0
     }

@@ -3,7 +3,7 @@ import { inject, ref } from "vue";
 import { useQuery } from "@tanstack/vue-query";
 import { genericGetHttpRequest } from "@/apiHttp/RequestsApi";
 import type { PageQueryParams, PagedResponse, PaginationData, AdminUserResponse, GenericErrorResponse } from "@/types/HttpResponseTypes";
-import type { AxiosError } from 'axios';
+import type { AxiosResponse } from 'axios';
 import { paginationQueryRequestDefault, paginationResponseDefault } from "../PaginationDefaults";
 
 const paginationData = ref<PaginationData>(paginationResponseDefault)
@@ -22,7 +22,7 @@ const popUpError: (msg: string, timeout: number) => void = inject("errorToastPop
 const fetchUsersAdminListFn = async (paginationParams:PageQueryParams) => 
     await genericGetHttpRequest<PagedResponse<AdminUserResponse>>('/users', paginationParams)
 const { data, isError, isLoading, error, refetch } = 
-    useQuery<PagedResponse<AdminUserResponse>, AxiosError<GenericErrorResponse, any>>(
+    useQuery<PagedResponse<AdminUserResponse>, AxiosResponse<GenericErrorResponse>>(
     ['getUsersPagedList'], 
     () => fetchUsersAdminListFn(paginationQueryData.value),
     {
@@ -31,14 +31,14 @@ const { data, isError, isLoading, error, refetch } =
             paginationData.value.paginationNumber = data.number + 1
         },
         onError: (error) => {
-            popUpError(error.response?.data.message || 'Unknown error message', 5000)
+            popUpError(error.data.message || 'Unknown error message', 5000)
         },
         retry: 0
     })
 </script>
 <template>
     <span v-if="isLoading">Loading...</span>
-    <span v-else-if="isError">Error: {{ error?.message }}</span>
+    <span v-else-if="isError">Error: {{ error?.data.message }}</span>
     <VTable v-else>
         <thead>
             <tr>

@@ -6,8 +6,7 @@ import type { ILoginRequest } from '@/types/HttpRequestTypes';
 import type { ITokenResponse, GenericErrorResponse } from '@/types/HttpResponseTypes';
 import { useAuthStore } from '@/stores/AuthorizationStore';
 import { genericPostHttpRequest } from '@/apiHttp/RequestsApi'
-import type { AxiosError } from 'axios';
-
+import type { AxiosResponse } from 'axios'
 const authStore = useAuthStore();
 
 const popUpError: (msg: string, timeout: number) => void = inject("errorToastPopUp", ()=>{})
@@ -17,11 +16,11 @@ const loginFn = async (credentials: ILoginRequest) =>
 		'/login', credentials, 
 		{ client: 'browser'}
 	)
-const { mutate } = useMutation<ITokenResponse, AxiosError<GenericErrorResponse, any>, ILoginRequest>(
+const { mutate } = useMutation<ITokenResponse,AxiosResponse<GenericErrorResponse, any>, ILoginRequest>(
 	loginFn,
 	{
 		onError: (error)=>{
-			popUpError(error.response?.data.message || 'Unknown login error', 5000)
+			popUpError(error.data.message || 'Unknown login error', 5000)
 		},
 		onSuccess: (data) => {
 			authStore.setHeaderAccessTokenKey(data.accessToken);

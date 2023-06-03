@@ -3,7 +3,7 @@ import { inject, onMounted, ref } from "vue";
 import { useMutation } from "@tanstack/vue-query";
 import { genericPostHttpRequest } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse, GeneratedLeagueGroup } from "@/types/HttpResponseTypes";
-import type { AxiosError } from 'axios';
+import type { AxiosResponse } from 'axios';
 import { onUpdated } from "vue";
 
 const props = defineProps({
@@ -36,7 +36,7 @@ const fetchUsersGeneratedLeaguesFn = async (requestBody: any) =>
     await genericPostHttpRequest<any, Array<GeneratedLeagueGroup>>(
         '/leagues/generate', requestBody, {leagueSize: props.leagueCompetitorsSize})
 const { mutate } = 
-    useMutation<Array<GeneratedLeagueGroup>, AxiosError<GenericErrorResponse, any>, any>(
+    useMutation<Array<GeneratedLeagueGroup>, AxiosResponse<GenericErrorResponse>, any>(
     ['genrateUsersLeaguesTables'], 
     fetchUsersGeneratedLeaguesFn,
     {
@@ -44,7 +44,7 @@ const { mutate } =
             generatedLeaguesRef.value = data;
         },
         onError: (error)=>{
-            popUpError(error.response?.data.message || 'Unknown login error', 5000)
+            popUpError(error.data.message || 'Unknown login error', 5000)
         },
         retry: 0
     })

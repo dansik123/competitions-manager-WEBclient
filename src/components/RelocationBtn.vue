@@ -3,7 +3,7 @@ import { inject } from "vue";
 import { useMutation } from "@tanstack/vue-query";
 import { genericPostHttpRequestNoParams } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse } from "@/types/HttpResponseTypes";
-import type { AxiosError } from 'axios';
+import type { AxiosResponse } from 'axios';
 import type { LeaguesRelocateDto } from "@/types/HttpRequestTypes";
 
 const props = defineProps({
@@ -25,11 +25,11 @@ const popUpSuccess: (msg: string, timeout: number) => void = inject("okayToastPo
 const relocateUsersAcrossLeagueFn = async (relocateData: LeaguesRelocateDto) => 
     await genericPostHttpRequestNoParams<LeaguesRelocateDto, any>('/leagues/relocate', relocateData)
 
-const { mutate } = useMutation<any, AxiosError<GenericErrorResponse, any>, LeaguesRelocateDto>(
+const { mutate } = useMutation<any, AxiosResponse<GenericErrorResponse>, LeaguesRelocateDto>(
     relocateUsersAcrossLeagueFn,
 {
     onError: (error)=>{
-        popUpError(error.response?.data.message || 'Unknown login error', 5000)
+        popUpError(error.data.message || 'Unknown login error', 5000)
     },
     onSuccess: () => {
         emits('onRelocationSuccess');

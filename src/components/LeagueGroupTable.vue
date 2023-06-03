@@ -3,7 +3,7 @@ import { computed, inject, ref, watch } from "vue";
 import { useQuery } from "@tanstack/vue-query";
 import { genericGetHttpRequest } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse, LeagueGroupRelocationResponse } from "@/types/HttpResponseTypes";
-import type { AxiosError } from 'axios';
+import type { AxiosResponse } from 'axios';
 import { useAuthStore } from "@/stores/AuthorizationStore"
 import type { LeaguesRelocateDto } from "@/types/HttpRequestTypes";
 import RelocationBtn from "@/components/RelocationBtn.vue";
@@ -53,7 +53,7 @@ const popUpError: (msg: string, timeout: number) => void = inject("errorToastPop
 const fetchGroupLeaguesStatusFn = async () => 
     await genericGetHttpRequest<LeagueGroupRelocationResponse>(`/leagues/groups/${props.leagueGroupName}`, {})
 const { isError, isLoading, error, refetch } = 
-    useQuery<LeagueGroupRelocationResponse, AxiosError<GenericErrorResponse, any>>(
+    useQuery<LeagueGroupRelocationResponse, AxiosResponse<GenericErrorResponse>>(
     ['getGroupLeaguesStatus'], 
     fetchGroupLeaguesStatusFn,
     {
@@ -63,14 +63,14 @@ const { isError, isLoading, error, refetch } =
             isLeagueFinishReady.value = data.leagueGroupFinished
         },
         onError: (error) => {
-            popUpError(error.response?.data.message || 'Unknown error message', 5000)
+            popUpError(error.data.message || 'Unknown error message', 5000)
         },
         retry: 0
     })
 </script>
 <template>
     <span v-if="isLoading">Loading...</span>
-    <span v-else-if="isError">Error: {{ error?.message }}</span>
+    <span v-else-if="isError">Error: {{ error?.data.message }}</span>
     <div v-else>
         <h5>League group {{ leagueGroupStatusData.leagueGroupName }} status</h5>
         <VTable>

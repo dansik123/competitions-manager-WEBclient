@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/vue-query";
 import { genericGetHttpRequest } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse, SingleMatchResponse, SingleRoundMatchesResponse } from "@/types/HttpResponseTypes";
 import { ref } from "vue";
-import type { AxiosError } from "axios";
+import type { AxiosResponse } from "axios";
 import { dateFormater, userTableCellFormater } from "@/components/Formaters";
 import { useAuthStore } from "@/stores/AuthorizationStore";
 import DateBtn from "@/components/adminComponents/DateBtn.vue"
@@ -24,7 +24,7 @@ const leagueMatchesDataRef = ref<Array<SingleRoundMatchesResponse>>([]);
 const fetchLeagueAllMatches = async (leagueId: number) => 
     await genericGetHttpRequest<Array<SingleRoundMatchesResponse>>(`/leagues/${leagueId}/matches`, {})
 const { isError, isLoading, error } = 
-    useQuery<Array<SingleRoundMatchesResponse>, AxiosError<GenericErrorResponse, any>>(
+    useQuery<Array<SingleRoundMatchesResponse>, AxiosResponse<GenericErrorResponse>>(
     ['getAllLeagueMatches'], 
     () => fetchLeagueAllMatches(props.leagueId),
     {
@@ -43,7 +43,7 @@ const correctMatch = (roundArrayIndex: number, matchArrayIndex: number, matchDat
 </script>
 <template>
     <span v-if="isLoading">Loading...</span>
-    <span v-else-if="isError">Error: {{ error?.response?.data.message}}</span>
+    <span v-else-if="isError">Error: {{ error?.data.message}}</span>
     <div v-else>
         <VContainer fluid>
             <VRow v-for="roundData, roundIndex in leagueMatchesDataRef" :key="roundIndex">

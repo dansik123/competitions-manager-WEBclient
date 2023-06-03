@@ -5,7 +5,7 @@ import LeaguesGeneratedTables from "@/components/adminComponents/LeaguesGenerate
 import { inject, ref } from "vue";
 import { genericPostHttpRequestNoParams } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse } from "@/types/HttpResponseTypes";
-import type { AxiosError } from "axios";
+import type { AxiosResponse } from "axios";
 import { useMutation } from "@tanstack/vue-query";
 import type { SaveLeaguesRequest } from "@/types/HttpRequestTypes";
 
@@ -54,7 +54,7 @@ const saveGeneratedLeaguesData = (leaguesSaveObject: any)=>{
 const saveGeneratedLeaguesFn = async (requestBody: SaveLeaguesRequest) => 
     await genericPostHttpRequestNoParams<SaveLeaguesRequest, any>('/leagues', requestBody)
 const { mutate } = 
-    useMutation<any, AxiosError<GenericErrorResponse, any>, SaveLeaguesRequest>(
+    useMutation<any, AxiosResponse<GenericErrorResponse>, SaveLeaguesRequest>(
     ['saveGeneratedLeagues'], 
     saveGeneratedLeaguesFn,
     {
@@ -63,7 +63,7 @@ const { mutate } =
             selectedGunTypeUsersGroup.value = undefined;
         },
         onError: (error)=>{
-            popUpError(error.response?.data.message || 'Unknown leagues save error', 5000)
+            popUpError(error.data.message || 'Unknown leagues save error', 5000)
         },
         retry: 0
     })

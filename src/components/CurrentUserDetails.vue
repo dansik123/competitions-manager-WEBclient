@@ -4,7 +4,7 @@ import { genericGetHttpRequest, genericPutHttpRequestNoParams } from "@/apiHttp/
 import type { GenericErrorResponse, UserDetailsResponse } from "@/types/HttpResponseTypes";
 import type { UserDetailsRequest } from "@/types/HttpRequestTypes";
 import { inject, ref } from "vue";
-import type { AxiosError } from "axios";
+import type { AxiosResponse } from "axios";
 const props = defineProps({
     isSuccess: {
         type: Boolean,
@@ -46,7 +46,7 @@ const updateCurrentUserDetails = async (changedUser: UserDetailsRequest): Promis
         changedUser
     )
 
-const { mutate } = useMutation<UserDetailsResponse, AxiosError<any, GenericErrorResponse>, UserDetailsRequest>(
+const { mutate } = useMutation<UserDetailsResponse, AxiosResponse<GenericErrorResponse>, UserDetailsRequest>(
     ["updateLogInUser"],
     updateCurrentUserDetails,
     {
@@ -55,7 +55,7 @@ const { mutate } = useMutation<UserDetailsResponse, AxiosError<any, GenericError
             popUpSuccess('User details has been updated', 5000)
         }, 
         onError: (error)=>{
-			popUpError(error.response?.data.message || 'Unknown login error', 5000)
+			popUpError(error.data.message || 'Unknown login error', 5000)
 		},
         retry: 0
     }

@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/vue-query";
 import { genericGetHttpRequest } from "@/apiHttp/RequestsApi";
 import type { GenericErrorResponse, SingleSlotUserPointsResponse, SummaryPointsRowResponse } from "@/types/HttpResponseTypes";
 import { ref, watch } from "vue";
-import type { AxiosError } from "axios";
+import type { AxiosResponse } from "axios";
 import { userTableCellFormater } from "@/components/Formaters";
 import { areUsersWithTheSameId } from "@/components/Utils";
 
@@ -27,7 +27,7 @@ const componentError = ref('')
 const fetchLeagueSummaryMatches = async (leagueId: number) => 
     await genericGetHttpRequest<Array<SummaryPointsRowResponse<SingleSlotUserPointsResponse>>>(`/leagues/${leagueId}/summary`, {})
 const { isError, isLoading, refetch } = 
-    useQuery<Array<SummaryPointsRowResponse<SingleSlotUserPointsResponse>>, AxiosError<GenericErrorResponse, any>>(
+    useQuery<Array<SummaryPointsRowResponse<SingleSlotUserPointsResponse>>, AxiosResponse<GenericErrorResponse>>(
     ['getLeagueSummaryData'], 
     () => fetchLeagueSummaryMatches(props.leagueId),
     {
@@ -35,7 +35,7 @@ const { isError, isLoading, refetch } =
             leagueSummaryDataRef.value = data
         },
         onError:(error) =>{
-            if(error?.response?.status == 409){
+            if(error?.status == 409){
                 componentError.value = "No matches have been created yet"
             }else{
                 componentError.value = "Can't display summary table(other problem)"
